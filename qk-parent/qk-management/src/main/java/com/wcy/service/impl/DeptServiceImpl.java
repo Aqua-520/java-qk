@@ -6,12 +6,15 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.wcy.common.PageResponse;
 import com.wcy.entity.Dept;
+import com.wcy.exception.DataNotFoundException;
 import com.wcy.mapper.DeptMapper;
 import com.wcy.service.DeptService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Comparator;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -55,7 +58,7 @@ public class DeptServiceImpl implements DeptService {
     public void updateDeptById(Dept dept) {
         // 先检测有没有id
         if (dept.getId() == null){
-            throw new RuntimeException("更新部门信息,参数缺失");
+            throw new DataNotFoundException("更新部门信息,参数缺失");
         }
 
         // 将对象丢入
@@ -68,9 +71,18 @@ public class DeptServiceImpl implements DeptService {
         Dept dept = this.deptMapper.selectById(deptId);
         if (dept == null){
             // 如果找不到删个毛啊
-            throw new RuntimeException("删除失败,部门不存在");
+            throw new DataNotFoundException("删除失败,部门不存在");
         }
         //  删除
         this.deptMapper.deleteById(deptId);
+    }
+
+    @Override
+    public List<Dept> selectAllDeptList() {
+        // 查询全部列表
+        List<Dept> list = this.deptMapper.selectList(Wrappers.emptyWrapper());
+        // 例如按 id 排序
+        list.sort(Comparator.comparing(Dept::getId));
+        return list;
     }
 }

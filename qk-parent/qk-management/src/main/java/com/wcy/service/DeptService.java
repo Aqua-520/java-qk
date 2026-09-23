@@ -3,6 +3,8 @@ package com.wcy.service;
 import com.wcy.common.PageResponse;
 import com.wcy.entity.Dept;
 
+import java.util.List;
+
 
 public interface DeptService {
 
@@ -15,4 +17,6 @@ public interface DeptService {
     void updateDeptById(Dept dept);
 
     void deleteDeptById(Integer deptId);
+
+    List<Dept> selectAllDeptList();
 }
