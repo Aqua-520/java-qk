@@ -7,6 +7,7 @@ import com.wcy.service.RoleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -20,7 +21,7 @@ public class RoleController {
     @GetMapping("/roles/list")
     public Response getAllRoleList(){
         // 调用业务层查询
-        List<Role> roleList = this.roleService.getAllRoleList();
+        List<Role> roleList = this.roleService.list(); // 改动代码
 
         // 返回
         return Response.success(roleList);
@@ -44,29 +45,34 @@ public class RoleController {
     @PutMapping("/roles")
     public Response updateRoleInfo(@RequestBody Role role){
         // 定义请求体接收前端json并包装成对象
-        this.roleService.updateRoleInfo(role);
-        return Response.success();
+
+        boolean result = this.roleService.updateById(role);
+        return result ? Response.success() : Response.error("角色更新失败");
     }
 
     // 新增角色
     @PostMapping("/roles")
     public Response insertRoleInfo(@RequestBody Role role){
         // 定义请求体接收前端json并包装成对象
-        this.roleService.insertRoleInfo(role);
-        return Response.success();
+
+        // 返回布尔值
+        boolean result = this.roleService.save(role);
+        return result ? Response.success() : Response.error("新增角色失败");
     }
 
     // 根据id查询单条
     @GetMapping("/roles/{id}")
     public Response selectRoleInfoById(@PathVariable(value = "id") Integer roleId){
+        // 这里是框架内置的
         Role role = this.roleService.getById(roleId);
-        return Response.success(role);
+        return role == null ? Response.error("角色id不存在") : Response.success(role);
     }
 
     // 根据id删除
     @DeleteMapping("/roles/{id}")
     public Response deleteRoleInfoById(@PathVariable(value = "id") Integer roleId){
-        this.roleService.deleteRoleInfoById(roleId);
-        return Response.success();
+        // 框架返回一个布尔值
+        boolean result = this.roleService.removeById(roleId);
+        return result ? Response.success() : Response.error("删除失败");
     }
 }
