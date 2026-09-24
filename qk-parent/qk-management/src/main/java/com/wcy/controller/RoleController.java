@@ -72,7 +72,11 @@ public class RoleController {
     @DeleteMapping("/roles/{id}")
     public Response deleteRoleInfoById(@PathVariable(value = "id") Integer roleId){
         // 框架返回一个布尔值
-        boolean result = this.roleService.removeById(roleId);
+        // boolean result = this.roleService.removeById(roleId);
+
+        // 我们还是切回自己写的
+        boolean result = this.roleService.deleteRoleInfoById(roleId);
+
         return result ? Response.success() : Response.error("删除失败");
     }
 }

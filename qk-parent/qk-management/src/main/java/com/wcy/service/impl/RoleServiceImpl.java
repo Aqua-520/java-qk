@@ -7,9 +7,12 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.wcy.common.PageResponse;
 import com.wcy.entity.Role;
+import com.wcy.entity.User;
+import com.wcy.exception.BusinessException;
 import com.wcy.exception.DataNotFoundException;
 import com.wcy.exception.ParamsException;
 import com.wcy.mapper.RoleMapper;
+import com.wcy.mapper.UserMapper;
 import com.wcy.service.RoleService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,6 +28,7 @@ import java.util.List;
 public class RoleServiceImpl extends ServiceImpl<RoleMapper,Role> implements RoleService {
     // 注入数据层依赖
     private final RoleMapper roleMapper;
+    private final UserMapper userMapper;
 
     // @Override
     // public List<Role> getAllRoleList() {
@@ -124,19 +128,34 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper,Role> implements Rol
     //     return role;
     // }
     //
-    // @Override
-    // public void deleteRoleInfoById(Integer roleId) {
-    //     // 根据id删除
-    //     // 打印日志
-    //     log.info("删除角色信息, id={}", roleId);
-    //
-    //     // 先查库，确认角色存在
-    //     Role existing = this.roleMapper.selectById(roleId);
-    //     if (existing == null) {
-    //         throw new DataNotFoundException("角色不存在，id=" + roleId);
-    //     }
-    //
-    //     // 删除
-    //     this.roleMapper.deleteById(roleId);
-    // }
+    @Override
+    public boolean deleteRoleInfoById(Integer roleId) {
+        // 根据id删除
+        // 打印日志
+        log.info("删除角色信息, id={}", roleId);
+
+        // 先查库，确认角色存在
+        Role existing = this.roleMapper.selectById(roleId);
+        if (existing == null) {
+            throw new DataNotFoundException("角色不存在，id=" + roleId);
+        }
+
+        // 判断用户表有没有关联的
+        Long selectCount = this.userMapper.selectCount(Wrappers.lambdaQuery(User.class).eq(User::getRoleId, roleId));
+
+        // 如果有关联,则报出异常
+        if (selectCount > 0){
+            throw new BusinessException("角色被关联,请先删除关联的用户");
+        }
+
+        // 注意：deleteById 返回 int 行数
+        int rows = this.roleMapper.deleteById(roleId);
+        if (rows == 0) {
+            throw new BusinessException("删除角色失败，请重试");
+        }
+
+        // 如果删除失败上面会报异常终止方法,所以true的情况一定删除成功了
+        return true;
+    }
+
 }

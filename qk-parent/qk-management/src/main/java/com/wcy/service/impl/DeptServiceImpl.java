@@ -6,8 +6,11 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.wcy.common.PageResponse;
 import com.wcy.entity.Dept;
+import com.wcy.entity.User;
+import com.wcy.exception.BusinessException;
 import com.wcy.exception.DataNotFoundException;
 import com.wcy.mapper.DeptMapper;
+import com.wcy.mapper.UserMapper;
 import com.wcy.service.DeptService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,6 +24,8 @@ import java.util.List;
 public class DeptServiceImpl implements DeptService {
     // 注入数据层依赖
     private final DeptMapper deptMapper;
+    // 传递用户层依赖
+    private final UserMapper userMapper;
 
     @Override
     public void insertDept(Dept dept) {
@@ -73,7 +78,16 @@ public class DeptServiceImpl implements DeptService {
             // 如果找不到删个毛啊
             throw new DataNotFoundException("删除失败,部门不存在");
         }
-        //  删除
+
+        // 做校验,看看有没有用户关联了此部门,如有则不允许删除
+        Long selectCount = this.userMapper.selectCount(Wrappers.lambdaQuery(User.class)
+                .eq(User::getDeptId, deptId));
+
+        // 如果大于0则代表用户表有和需要删除的部门id有关联
+        if (selectCount > 0){
+            throw new BusinessException("部门id被关联,请删除关联用户后再删除");
+        }
+        // 删除
         this.deptMapper.deleteById(deptId);
     }
 

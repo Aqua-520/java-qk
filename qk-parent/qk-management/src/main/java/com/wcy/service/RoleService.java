@@ -18,5 +18,5 @@ public interface RoleService extends IService<Role> {
     //
     // Role getById(Integer roleId);
     //
-    // void deleteRoleInfoById(Integer roleId);
+    boolean deleteRoleInfoById(Integer roleId);
 }

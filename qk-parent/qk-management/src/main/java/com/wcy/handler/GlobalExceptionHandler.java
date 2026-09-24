@@ -1,6 +1,7 @@
 package com.wcy.handler;
 
 import com.wcy.common.Response;
+import com.wcy.exception.BusinessException;
 import com.wcy.exception.DataNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DuplicateKeyException;
@@ -35,6 +36,17 @@ public class GlobalExceptionHandler {
         }
 
         return Response.error("操作失败,请联系管理员");
+    }
+
+    // 打印业务异常
+    @ExceptionHandler(BusinessException.class)
+    public Response businessHandler(BusinessException e){
+        // 打印异常调用栈
+        e.printStackTrace();
+        // 打印日志
+        log.error("业务功能出现异常:{}",e.getMessage());
+
+        return Response.error("业务异常:" + e.getMessage());
     }
 
     // 打印全局日志
