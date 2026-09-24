@@ -2,6 +2,7 @@ package com.wcy.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -31,6 +32,7 @@ public class User {
     /**
      * 密码
      */
+    @JsonIgnore
     private String password;
 
     /**
@@ -79,6 +81,7 @@ public class User {
     private String remark;
 
     // 盐
+    @JsonIgnore
     private String salt;
 
     /**
