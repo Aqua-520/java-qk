@@ -1,7 +1,9 @@
 package com.wcy.entity;
 
 import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
@@ -10,56 +12,47 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
-/**
- * 课程表
- */
+// 数据库模型类
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@TableName("course")
-public class Course {
+@TableName("activity")
+public class Activity {
 
-    /**
-     * 课程id, 主键
-     */
+    /** id, 主键 */
+    @TableId(type = IdType.AUTO)
     private Integer id;
 
-    /**
-     * 课程学科，1:AI智能应用开发(Java), 2:AI大模型开发(Python)，
-     * 3:AI鸿蒙开发，4:AI大数据，5:AI嵌入式，6:AI测试，7:AI运维
-     */
-    private Integer subject;
+    /** 渠道来源, 1:线上活动, 2:推广介绍 */
+    private Integer channel;
 
-    /**
-     * 课程名称
-     */
+    /** 活动名称 */
     private String name;
 
-    /**
-     * 课程价格（元）
-     */
-    private Integer price;
+    /** 开始时间 */
+    private LocalDateTime startTime;
 
-    /**
-     * 适用人群, 1:小白学员, 2:初级程序员, 3:中级程序员
-     */
-    private Integer target;
+    /** 结束时间 */
+    private LocalDateTime endTime;
 
-    /**
-     * 课程介绍
-     */
+    /** 活动简介 */
     private String description;
 
-    /**
-     * 创建时间
-     */
+    /** 活动类型, 1:课程折扣, 2:代金券 */
+    private Integer type;
+
+    /** 课程折扣 */
+    private Double discount;
+
+    /** 代金券金额（元） */
+    private Integer voucher;
+
+    /** 创建时间 : 插入时自动填充 */
     @TableField(fill = FieldFill.INSERT)
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private LocalDateTime createTime;
 
-    /**
-     * 修改时间
-     */
+    /** 修改时间 : 插入和更新时都自动填充 */
     @TableField(fill = FieldFill.INSERT_UPDATE)
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private LocalDateTime updateTime;

@@ -1,5 +1,9 @@
 package com.wcy.interceptor;
 
+import cn.hutool.core.util.StrUtil;
+import cn.hutool.http.HttpStatus;
+import com.wcy.utils.JwtUtil;
+import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +28,27 @@ public class LoginInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         log.info("LoginInterceptor中的preHandle方法执行了.....");
+        // 将token拿出来
+        String token = request.getHeader("token");
+
+        // 判断token是否为空
+        if(StrUtil.isBlank(token)){
+            // 如果为空,抛出401状态码返回给前端,并且做拦截
+            response.setStatus(HttpStatus.HTTP_UNAUTHORIZED);
+            return false;
+        }
+        // 对token做解密,如果通过则放行
+        try {
+            // 因为如果失败的话,解密token工具类会抛出异常
+            Claims claims = JwtUtil.parseToken(token);
+        }catch (Exception e) {
+            log.error("令牌校验失败,原始令牌:{},失败原因:{}", token, e.getMessage());
+            // 设置状态码并且拦截
+            response.setStatus(HttpStatus.HTTP_UNAUTHORIZED);
+            return false;
+        }
+
+        // 以上都没问题则放行
         return true;
     }
 

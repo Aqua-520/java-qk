@@ -5,6 +5,11 @@ spring:
     url: jdbc:mysql://localhost:3306/qk
     username: root
     password: 843708301
+  # 文件上传大小限制
+  servlet:
+    multipart:
+      max-file-size: 2MB        # 单个文件最大 2MB
+      max-request-size: 10MB    # 单次请求总大小，含多个文件 + 表单字段
 
 #mybatis-plus配置
 mybatis-plus:
