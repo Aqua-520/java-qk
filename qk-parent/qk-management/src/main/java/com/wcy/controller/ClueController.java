@@ -3,6 +3,7 @@ package com.wcy.controller;
 import com.wcy.common.PageResponse;
 import com.wcy.common.Response;
 import com.wcy.dto.ClueQueryDTO;
+import com.wcy.dto.ClueUpdateDTO;
 import com.wcy.entity.Clue;
 import com.wcy.service.ClueService;
 import lombok.RequiredArgsConstructor;
@@ -41,6 +42,22 @@ public class ClueController {
         // 调用业务层,让某个老师来跟进这条线索
         this.clueService.assignClue(clueId,userId);
 
+        return Response.success();
+    }
+
+    // 根据id查询线索
+    @GetMapping("/clues/{id}")
+    public Response selectClueById(@PathVariable("id") Integer clueId){
+        // 调用业务层返回clue对象返回给前端
+        Clue clue = this.clueService.selectClueById(clueId);
+        return Response.success(clue);
+    }
+
+    // 线索跟进,也就是修改,补充id查询到的线索
+    @PutMapping("/clues")
+    public Response updateClue(@RequestBody ClueUpdateDTO clueUpdateDTO){
+        // 调用业务层方法,完成更新及其创建跟进记录的操作
+        this.clueService.updateClue(clueUpdateDTO);
         return Response.success();
     }
 }

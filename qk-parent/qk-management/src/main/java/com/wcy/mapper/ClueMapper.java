@@ -12,4 +12,7 @@ import org.apache.ibatis.annotations.Mapper;
 public interface ClueMapper extends BaseMapper<Clue> {
     // 去xml中定义映射
     Page<Clue> selectClueListByLimit(IPage<Clue> page, ClueQueryDTO clueQueryDTO);
+
+    // 三表联查
+    Clue selectClueById(Integer clueId);
 }

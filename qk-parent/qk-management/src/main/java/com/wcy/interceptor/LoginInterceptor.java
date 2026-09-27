@@ -3,6 +3,7 @@ package com.wcy.interceptor;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpStatus;
 import com.wcy.utils.JwtUtil;
+import com.wcy.utils.UserHolder;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -41,6 +42,12 @@ public class LoginInterceptor implements HandlerInterceptor {
         try {
             // 因为如果失败的话,解密token工具类会抛出异常
             Claims claims = JwtUtil.parseToken(token);
+            // 从解密的载荷中获取用户id
+            Integer id = claims.get("id",Integer.class);
+
+            // 把id绑到线程上供后续函数使用
+            UserHolder.saveCurrentUserId(id);
+
         }catch (Exception e) {
             log.error("令牌校验失败,原始令牌:{},失败原因:{}", token, e.getMessage());
             // 设置状态码并且拦截
@@ -78,5 +85,7 @@ public class LoginInterceptor implements HandlerInterceptor {
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, @Nullable Exception ex) throws Exception {
         log.info("LoginInterceptor中的afterCompletion方法执行了.....");
+        // 请求结束后,从线程池中删除用户id,避免挤占内存空间
+        UserHolder.clearUserId();
     }
 }

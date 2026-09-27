@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * 线索实体类
@@ -76,5 +77,9 @@ public class Clue {
     // 新增归属人的名称,作为响应参数返回给前端,并且让数据库忽略
     @TableField(exist = false)
     private String assignName;
+
+    // 新增一条属性,封装需要返回的跟进历史
+    @TableField(exist = false)
+    private List<ClueTrackRecord> trackRecords;
 
 }

@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -41,6 +42,7 @@ public class ClueTrackRecord {
     private String record;
 
     /** 下次跟进时间 (同步更新到 clue.next_time) */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private LocalDateTime nextTime;
 
     /** 跟进类型, 1:正常跟进, 0:伪线索 (字典) */
@@ -50,6 +52,11 @@ public class ClueTrackRecord {
     private Integer falseReason;
 
     /** 创建时间 (插入时自动填充, 记录为日志, 不设 updateTime) */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     @TableField(fill = FieldFill.INSERT)
     private LocalDateTime createTime;
+
+    // 新增一条跟进人,返回给前端回显
+    @TableField(exist = false)
+    private String assignName;
 }

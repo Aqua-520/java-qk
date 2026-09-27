@@ -45,7 +45,7 @@ public class LoginServiceImpl implements LoginService {
         // 生成jwt令牌作为token发给前端
         // 用用户id和用户名作为载荷
         HashMap<String, Object> hashMap = new HashMap<>();
-        hashMap.put("id",loginVO.getPassword());
+        hashMap.put("id",loginVO.getId());
         hashMap.put("username",loginVO.getUsername());
 
         String token = JwtUtil.generateToken(hashMap);

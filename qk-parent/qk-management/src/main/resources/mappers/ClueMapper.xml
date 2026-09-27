@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.wcy.mapper.ClueMapper">
-<!--    Page<Clue> selectClueListByLimit(IPage<Clue> page, ClueQueryDTO clueQueryDTO);-->
+    <!--    Page<Clue> selectClueListByLimit(IPage<Clue> page, ClueQueryDTO clueQueryDTO);-->
     <select id="selectClueListByLimit" resultType="com.wcy.entity.Clue">
         select
         c.id,
@@ -35,5 +35,76 @@
             </if>
         </where>
         order by c.update_time desc
+    </select>
+    <!--  Clue selectClueById(Integer clueId); -->
+    <resultMap id="clueInfoMap" type="com.wcy.entity.Clue">
+        <!--
+            定义结果集名称id属性
+            type为结果集封装的数据模型对象类
+        -->
+        <!--
+            Column是查询语句查出的表字段名,property是类属性
+        -->
+        <id column="id" property="id"></id>
+        <result column="phone" property="phone"></result>
+        <result column="channel" property="channel"></result>
+        <result column="activity_id" property="activityId"></result>
+        <result column="name" property="name"></result>
+        <result column="gender" property="gender"></result>
+        <result column="age" property="age"></result>
+        <result column="wechat" property="wechat"></result>
+        <result column="qq" property="qq"></result>
+        <result column="subject" property="subject"></result>
+        <result column="level" property="level"></result>
+        <result column="next_time" property="nextTime"></result>
+
+        <!--
+
+            因为查询结果是多条,主要的信息通过上面的字段去重,我们通过定义集合,来存储不重复的信息
+        -->
+        <collection property="trackRecords" ofType="com.wcy.entity.ClueTrackRecord">
+            <!--
+                主键字段映射
+                trackRecords封装到结果集的这个属性当中,这个属性是一个单列集合类型
+                ofType指定单列集合的数据模型类
+            -->
+            <id column="ct_id" property="id"></id>
+            <!--普通字段映射-->
+            <result column="ct_level" property="level"></result>
+            <result column="ct_subject" property="subject"></result>
+            <result column="ct_user_id" property="userId"></result>
+            <result column="ct_assignName" property="assignName"></result>
+            <result column="ct_create_time" property="createTime"></result>
+            <result column="ct_next_time" property="nextTime"></result>
+            <result column="ct_record" property="record"></result>
+        </collection>
+    </resultMap>
+    <select id="selectClueById" resultMap="clueInfoMap">
+--         自定义sql查询,自定义指定结果封装的result映射
+        select c.id,
+               c.phone,
+               c.channel,
+               c.activity_id,
+               c.name,
+               c.gender,
+               c.age,
+               c.wechat,
+               c.qq,
+               c.subject,
+               c.level,
+               c.next_time,
+               ct.id          ct_id,
+               ct.level       ct_level,
+               ct.subject     ct_subject,
+               ct.user_id     ct_user_id,
+               u.name         ct_assignName,
+               ct.create_time ct_create_time,
+               ct.next_time   ct_next_time,
+               ct.record      ct_record
+        from clue c
+                 left join clue_track_record ct
+                           on c.id = ct.clue_id
+                 left join user u on ct.user_id = u.id
+        where c.id = #{clueId};
     </select>
 </mapper>
