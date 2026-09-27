@@ -12,4 +12,6 @@ public interface ActivityService extends IService<Activity> {
     List<Activity> getAllActivities();
 
     PageResponse<Activity> getActivitiesByLimit(ActivityQueryDTO queryDTO);
+
+    List<Activity> selectActivityByChannel(Integer type);
 }

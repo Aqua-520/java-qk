@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.wcy.mapper.ClueMapper">
+<!--    Page<Clue> selectClueListByLimit(IPage<Clue> page, ClueQueryDTO clueQueryDTO);-->
+    <select id="selectClueListByLimit" resultType="com.wcy.entity.Clue">
+        select
+        c.id,
+        c.phone,
+        c.name,
+        c.channel,
+        c.create_time,
+        c.user_id,
+        u.name assignName,
+        c.status,
+        c.next_time
+        from clue c
+        left join user u on c.user_id = u.id
+        <where>
+            c.status in (1,2,3)
+            <if test="clueQueryDTO.clueId != null">
+                and c.id = #{clueQueryDTO.clueId}
+            </if>
+            <if test="clueQueryDTO.phone != null and clueQueryDTO.phone != ''">
+                and c.phone like concat('%', #{clueQueryDTO.phone}, '%')
+            </if>
+            <if test="clueQueryDTO.status != null">
+                and c.status = #{clueQueryDTO.status}
+            </if>
+            <if test="clueQueryDTO.channel != null">
+                and c.channel = #{clueQueryDTO.channel}
+            </if>
+            <if test="clueQueryDTO.assignName != null and clueQueryDTO.assignName != ''">
+                and u.name like concat('%', #{clueQueryDTO.assignName}, '%')
+            </if>
+        </where>
+        order by c.update_time desc
+    </select>
+</mapper>

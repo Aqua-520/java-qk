@@ -70,4 +70,11 @@ public class ActivityController {
 
         return result ? Response.success() : Response.error("删除失败");
     }
+
+    // 根据活动频道筛选活动,线下或者线上
+    @GetMapping("/type/{type}")
+    public Response selectActivityByChannel(@PathVariable Integer type) {
+        List<Activity> activityList = activityService.selectActivityByChannel(type);
+        return Response.success(activityList);
+    }
 }

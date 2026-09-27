@@ -68,4 +68,9 @@ public class ActivityServiceImpl extends ServiceImpl<ActivityMapper, Activity> i
 
         return response;
     }
+
+    @Override
+    public List<Activity> selectActivityByChannel(Integer channel) {
+        return activityMapper.selectList(Wrappers.lambdaQuery(Activity.class).eq(Activity::getChannel, channel));
+    }
 }
