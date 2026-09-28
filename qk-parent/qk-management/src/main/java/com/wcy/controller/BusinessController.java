@@ -4,10 +4,12 @@ import com.aliyun.core.annotation.Path;
 import com.wcy.common.PageResponse;
 import com.wcy.common.Response;
 import com.wcy.dto.BusinessAddDTO;
+import com.wcy.dto.BusinessPoolQueryDTO;
 import com.wcy.dto.BusinessQueryDTO;
 import com.wcy.dto.BusinessTrackDTO;
 import com.wcy.entity.Business;
 import com.wcy.service.BusinessService;
+import com.wcy.vo.BusinessPoolVO;
 import com.wcy.vo.BusinessVO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -77,5 +79,15 @@ public class BusinessController {
         this.businessService.assignBusiness(businessTrackDTO);
 
         return Response.success();
+    }
+
+    // 回显公海池
+    @GetMapping("/businesses/pool")
+    public Response selectPool(BusinessPoolQueryDTO poolQueryDTO){
+        // dto传给业务层
+        // 业务层需要返回一个分页响应对象
+        PageResponse<BusinessPoolVO> pageResponse = this.businessService.selectPool(poolQueryDTO);
+
+        return Response.success(pageResponse);
     }
 }

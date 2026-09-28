@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.wcy.common.PageResponse;
 import com.wcy.dto.BusinessAddDTO;
+import com.wcy.dto.BusinessPoolQueryDTO;
 import com.wcy.dto.BusinessQueryDTO;
 import com.wcy.dto.BusinessTrackDTO;
 import com.wcy.entity.Business;
@@ -15,6 +16,7 @@ import com.wcy.mapper.BusinessMapper;
 import com.wcy.mapper.BusinessTrackRecordMapper;
 import com.wcy.service.BusinessService;
 import com.wcy.utils.UserHolder;
+import com.wcy.vo.BusinessPoolVO;
 import com.wcy.vo.BusinessVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -167,7 +169,7 @@ public class BusinessServiceImpl extends ServiceImpl<BusinessMapper, Business> i
 
         // 将前端接收的字段更新到数据库对象中
         // 屏蔽更新id,phone,channel,userId,clueId，不允许修改这些字段
-        BeanUtil.copyProperties(businessTrackDTO, business, "id", "phone", "channel", "userId", "clueId");
+        BeanUtil.copyProperties(businessTrackDTO, business, "id", "phone", "userId", "clueId");
 
         // 修改商机状态为跟进中 (3)
         business.setStatus(3);
@@ -202,6 +204,24 @@ public class BusinessServiceImpl extends ServiceImpl<BusinessMapper, Business> i
 
         // 保存到数据库表中
         this.businessTrackRecordMapper.insert(businessTrackRecord);
+    }
+
+    /**
+     * 查询公海池列表,并且需要带分页
+     * @param poolQueryDTO 前端的查询参数封装的dto对象
+     * @return 返回分页响应对象
+     */
+    @Override
+    public PageResponse<BusinessPoolVO> selectPool(BusinessPoolQueryDTO poolQueryDTO) {
+        Page<BusinessPoolVO> businessPoolVOPage = this.businessMapper.selectPool(new Page<>(
+                poolQueryDTO.getPage(),poolQueryDTO.getPageSize()),poolQueryDTO);
+
+        // 封装分页对象
+        PageResponse<BusinessPoolVO> pageResponse = new PageResponse<>();
+        pageResponse.setTotal(businessPoolVOPage.getTotal());
+        pageResponse.setRows(businessPoolVOPage.getRecords());
+
+        return pageResponse;
     }
 
 }

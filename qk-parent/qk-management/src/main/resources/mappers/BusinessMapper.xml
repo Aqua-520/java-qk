@@ -107,4 +107,44 @@
             <result property="assignName" column="u_name"/>
         </collection>
     </resultMap>
+    <!--Page<BusinessPoolVO> selectPool(IPage<BusinessPoolVO> objectPage, BusinessPoolQueryDTO poolQueryDTO);-->
+    <select id="selectPool" resultType="com.wcy.vo.BusinessPoolVO">
+        select
+        b.id,
+        b.name,
+        b.phone,
+        b.gender,
+        b.age,
+        b.wechat,
+        b.qq,
+        b.subject,
+        b.course_id,
+        b.degree,
+        b.job_status,
+        b.channel,
+        b.remark,
+        b.status,
+        b.user_id,
+        b.clue_id,
+        b.next_time,
+        b.create_time,
+        b.update_time
+        from business b
+        <where>
+            b.status = 4
+            <if test="poolQueryDTO.businessId != null">
+                and b.id = #{poolQueryDTO.businessId}
+            </if>
+            <if test="poolQueryDTO.name != null and poolQueryDTO.name != ''">
+                and b.name like concat('%', #{poolQueryDTO.name}, '%')
+            </if>
+            <if test="poolQueryDTO.phone != null and poolQueryDTO.phone != ''">
+                and b.phone like concat('%', #{poolQueryDTO.phone}, '%')
+            </if>
+            <if test="poolQueryDTO.subject != null">
+                and b.subject = #{poolQueryDTO.subject}
+            </if>
+        </where>
+        order by b.create_time desc
+    </select>
 </mapper>
