@@ -45,4 +45,66 @@
         </where>
         order by b.create_time desc
     </select>
+    <!--BusinessVO selectBusinessById(Integer businessId);-->
+    <!-- 查询语句 -->
+    <select id="selectBusinessById" resultMap="BusinessVOMap">
+        SELECT
+            b.id, b.name, b.phone, b.gender, b.age, b.wechat, b.qq,
+            b.subject, b.course_id, b.degree, b.job_status, b.channel,
+            b.remark, b.status, b.user_id, b.clue_id,
+            b.next_time, b.create_time, b.update_time,
+
+            br.id AS br_id,
+            br.business_id AS br_business_id,
+            br.user_id AS br_user_id,
+            br.track_status AS br_track_status,
+            br.key_items AS br_key_items,
+            br.next_time AS br_next_time,
+            br.record AS br_record,
+            br.create_time AS br_create_time,
+
+            u.name AS u_name
+        FROM business b
+                 LEFT JOIN business_track_record br ON b.id = br.business_id
+                 LEFT JOIN user u ON br.user_id = u.id
+        WHERE b.id = #{businessId}
+        ORDER BY br.create_time DESC
+    </select>
+<!--    一对多,通过列表封装第二张表的查询结果-->
+    <!-- 定义结果集映射 -->
+    <resultMap id="BusinessVOMap" type="com.wcy.vo.BusinessVO">
+        <!-- 商机基础字段 -->
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="phone" column="phone"/>
+        <result property="gender" column="gender"/>
+        <result property="age" column="age"/>
+        <result property="wechat" column="wechat"/>
+        <result property="qq" column="qq"/>
+        <result property="subject" column="subject"/>
+        <result property="courseId" column="course_id"/>
+        <result property="degree" column="degree"/>
+        <result property="jobStatus" column="job_status"/>
+        <result property="channel" column="channel"/>
+        <result property="remark" column="remark"/>
+        <result property="status" column="status"/>
+        <result property="userId" column="user_id"/>
+        <result property="clueId" column="clue_id"/>
+        <result property="nextTime" column="next_time"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+
+        <!-- 一对多映射：跟进记录列表 -->
+        <collection property="trackRecords" ofType="com.wcy.vo.BusinessTrackRecordVO">
+            <id property="id" column="br_id"/>
+            <result property="businessId" column="br_business_id"/>
+            <result property="userId" column="br_user_id"/>
+            <result property="trackStatus" column="br_track_status"/>
+            <result property="keyItems" column="br_key_items"/>
+            <result property="nextTime" column="br_next_time"/>
+            <result property="record" column="br_record"/>
+            <result property="createTime" column="br_create_time"/>
+            <result property="assignName" column="u_name"/>
+        </collection>
+    </resultMap>
 </mapper>

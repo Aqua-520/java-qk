@@ -7,17 +7,27 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.wcy.common.PageResponse;
 import com.wcy.dto.BusinessAddDTO;
 import com.wcy.dto.BusinessQueryDTO;
+import com.wcy.dto.BusinessTrackDTO;
 import com.wcy.entity.Business;
+import com.wcy.entity.BusinessTrackRecord;
+import com.wcy.exception.BusinessException;
 import com.wcy.mapper.BusinessMapper;
+import com.wcy.mapper.BusinessTrackRecordMapper;
 import com.wcy.service.BusinessService;
+import com.wcy.utils.UserHolder;
+import com.wcy.vo.BusinessVO;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class BusinessServiceImpl extends ServiceImpl<BusinessMapper, Business> implements BusinessService {
     // 导入BusinessMapper
     private final BusinessMapper businessMapper;
+    private final BusinessTrackRecordMapper businessTrackRecordMapper;
 
     /**
      * 分页查询商机列表
@@ -78,4 +88,120 @@ public class BusinessServiceImpl extends ServiceImpl<BusinessMapper, Business> i
         // 回存
         this.businessMapper.updateById(business);
     }
+
+    /**
+     * 将商机踢回公海
+     * @param businessId 商机id
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void backBusiness(Integer businessId) {
+        // 查询出商机对象
+        Business business = this.businessMapper.selectById(businessId);
+        // 修改状态为回收
+        business.setStatus(4);
+        // 保存
+        this.businessMapper.updateById(business);
+
+        // 新建商机跟进记录对象
+        BusinessTrackRecord businessTrackRecord = new BusinessTrackRecord();
+
+        // 设置字段
+        // 设置记录的商机id
+        businessTrackRecord.setBusinessId(businessId);
+        // 设置操作人id
+        businessTrackRecord.setUserId(UserHolder.getUserId());
+
+        // 踢回公海，不在正常跟进状态里，看你们字典定义，没有就随便给个值
+        businessTrackRecord.setTrackStatus(0);
+        businessTrackRecord.setKeyItems("踢回公海");
+        businessTrackRecord.setNextTime(null);
+        businessTrackRecord.setRecord("商机已被踢回公海"); // 没传原因，先写死
+
+        // 保存到数据库
+        this.businessTrackRecordMapper.insert(businessTrackRecord);
+    }
+
+    /**
+     * 转客户
+     * @param businessId 商机id
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void toCustomer(Integer businessId) {
+        // 将商机状态设置为客户
+        // 查询出商机对象
+        Business business = this.businessMapper.selectById(businessId);
+        // 修改状态为回收
+        business.setStatus(5);
+        // 保存
+        this.businessMapper.updateById(business);
+
+        // 新建客户对象,存储客户信息到客户表
+        throw new BusinessException("转客户还未开发完毕,缺客户表");
+
+    }
+
+    /**
+     * 根据id查询商机详情
+     * @param businessId 商机id
+     * @return 返回vo模型对象,涉及到三表联查,需要自定义sql
+     */
+    @Override
+    public BusinessVO selectBusinessById(Integer businessId) {
+        return this.businessMapper.selectBusinessById(businessId);
+    }
+
+    /**
+     * 跟进商机
+     * @param businessTrackDTO 前端传过来的dto
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void assignBusiness(BusinessTrackDTO businessTrackDTO) {
+        // 先根据id查询商机
+        Business business = this.businessMapper.selectById(businessTrackDTO.getId());
+        if (business == null) {
+            throw new BusinessException("商机跟进失败，商机不存在");
+        }
+
+        // 将前端接收的字段更新到数据库对象中
+        // 屏蔽更新id,phone,channel,userId,clueId，不允许修改这些字段
+        BeanUtil.copyProperties(businessTrackDTO, business, "id", "phone", "channel", "userId", "clueId");
+
+        // 修改商机状态为跟进中 (3)
+        business.setStatus(3);
+
+        // 将最新的商机对象保存到数据库
+        this.businessMapper.updateById(business);
+
+        // 创建跟进记录对象
+        BusinessTrackRecord businessTrackRecord = new BusinessTrackRecord();
+        // 设置此条记录操作的商机id
+        businessTrackRecord.setBusinessId(businessTrackDTO.getId());
+
+        // 获取当前登录的老师id并设置
+        Integer userId = UserHolder.getUserId();
+        businessTrackRecord.setUserId(userId);
+
+        // 设置跟进状态
+        businessTrackRecord.setTrackStatus(businessTrackDTO.getTrackStatus());
+
+        // 注意：前端传的 keyItems 是 List<String>，数据库是 varchar，需要拼接
+        if (businessTrackDTO.getKeyItems() != null && !businessTrackDTO.getKeyItems().isEmpty()) {
+            businessTrackRecord.setKeyItems(String.join(",", businessTrackDTO.getKeyItems()));
+        } else {
+            businessTrackRecord.setKeyItems("[]");
+        }
+
+        // 设置下次跟进时间
+        businessTrackRecord.setNextTime(businessTrackDTO.getNextTime());
+
+        // 设置沟通纪要
+        businessTrackRecord.setRecord(businessTrackDTO.getRecord());
+
+        // 保存到数据库表中
+        this.businessTrackRecordMapper.insert(businessTrackRecord);
+    }
+
 }
