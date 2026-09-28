@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wcy.mapper.BusinessMapper">
+    <!--Page<Business> selectBusinessListByLimit(IPage<Business> objectPage, BusinessQueryDTO businessQueryDTO);-->
+    <select id="selectBusinessListByLimit" resultType="com.wcy.entity.Business">
+        select
+        b.id,
+        b.name,
+        b.phone,
+        b.gender,
+        b.age,
+        b.wechat,
+        b.qq,
+        b.subject,
+        b.course_id,
+        b.degree,
+        b.job_status,
+        b.channel,
+        b.remark,
+        b.status,
+        b.user_id,
+        b.clue_id,
+        b.next_time,
+        b.create_time,
+        b.update_time,
+        u.name as assignName
+        from business b
+        left join user u on b.user_id = u.id
+        <where>
+            <if test="businessQueryDTO.businessId != null">
+                and b.id = #{businessQueryDTO.businessId}
+            </if>
+            <if test="businessQueryDTO.name != null and businessQueryDTO.name != ''">
+                and b.name like concat('%', #{businessQueryDTO.name}, '%')
+            </if>
+            <if test="businessQueryDTO.phone != null and businessQueryDTO.phone != ''">
+                and b.phone like concat('%', #{businessQueryDTO.phone}, '%')
+            </if>
+            <if test="businessQueryDTO.status != null">
+                and b.status = #{businessQueryDTO.status}
+            </if>
+            <if test="businessQueryDTO.assignName != null and businessQueryDTO.assignName != ''">
+                and u.name like concat('%', #{businessQueryDTO.assignName}, '%')
+            </if>
+        </where>
+        order by b.create_time desc
+    </select>
+</mapper>
