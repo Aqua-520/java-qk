@@ -107,4 +107,29 @@
                  left join user u on ct.user_id = u.id
         where c.id = #{clueId};
     </select>
+    <!--Page<CluePoolVO> selectCluePool(IPage<CluePoolVO> objectPage, CluePoolDTO cluePoolDTO);-->
+    <select id="selectCluePool" resultType="com.wcy.vo.CluePoolVO">
+        select
+        c.id, c.phone, c.channel, c.activity_id, c.name,
+        c.gender, c.age, c.wechat, c.qq, c.user_id,
+        c.status, c.subject, c.level, c.next_time,
+        c.create_time, c.update_time,
+        u.name as assignName,
+        a.name as activityName
+        from clue c
+        left join user u on c.user_id = u.id
+        left join activity a on c.activity_id = a.id
+        <where>
+            <if test="cluePoolDTO.clueId != null">
+                and c.id = #{cluePoolDTO.clueId}
+            </if>
+            <if test="cluePoolDTO.phone != null and cluePoolDTO.phone != ''">
+                and c.phone like concat('%', #{cluePoolDTO.phone}, '%')
+            </if>
+            <if test="cluePoolDTO.channel != null">
+                and c.channel = #{cluePoolDTO.channel}
+            </if>
+        </where>
+        order by c.update_time desc
+    </select>
 </mapper>

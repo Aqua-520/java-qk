@@ -2,10 +2,13 @@ package com.wcy.controller;
 
 import com.wcy.common.PageResponse;
 import com.wcy.common.Response;
+import com.wcy.dto.ClueMarkFalseDTO;
+import com.wcy.dto.CluePoolDTO;
 import com.wcy.dto.ClueQueryDTO;
 import com.wcy.dto.ClueUpdateDTO;
 import com.wcy.entity.Clue;
 import com.wcy.service.ClueService;
+import com.wcy.vo.CluePoolVO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -60,4 +63,32 @@ public class ClueController {
         this.clueService.updateClue(clueUpdateDTO);
         return Response.success();
     }
+
+    // 将线索转商机的接口
+    @PutMapping("/clues/toBusiness/{id}")
+    public Response clueToBusiness(@PathVariable("id") Integer clueId){
+        // 将id发给业务层做操作,主要是修改状态,并且创建新的商机对象存储数据库中
+        this.clueService.clueToBusiness(clueId);
+
+        return Response.success();
+    }
+
+    // 线索转伪线索处理
+    @PutMapping("/clues/false/{id}")
+    public Response clueToFalse(@PathVariable("id") Integer clueId, @RequestBody ClueMarkFalseDTO clueMarkFalseDTO){
+        // 将id发给业务层做操作,主要是修改状态,并且生成新的跟进记录
+        this.clueService.clueToFalse(clueId,clueMarkFalseDTO);
+
+        return Response.success();
+    }
+
+    // 线索池列表查询
+    @GetMapping("/clues/pool")
+    public Response selectCluePool(CluePoolDTO cluePoolDTO){
+        // 将DTO传给业务层,返回分页响应对象
+        PageResponse<CluePoolVO> pageResponse = this.clueService.selectCluePool(cluePoolDTO);
+
+        return Response.success(pageResponse);
+    }
+
 }
