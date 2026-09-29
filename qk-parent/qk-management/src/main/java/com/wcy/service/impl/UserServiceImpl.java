@@ -7,6 +7,7 @@ import cn.hutool.crypto.digest.DigestUtil;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.wcy.annotation.WcyLogger;
 import com.wcy.common.PageResponse;
 import com.wcy.dto.UserQueryDTO;
 import com.wcy.entity.User;

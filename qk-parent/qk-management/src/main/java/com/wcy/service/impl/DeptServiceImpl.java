@@ -4,6 +4,7 @@ import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.wcy.annotation.WcyLogger;
 import com.wcy.common.PageResponse;
 import com.wcy.entity.Dept;
 import com.wcy.entity.User;
@@ -30,8 +31,9 @@ public class DeptServiceImpl implements DeptService {
     @Override
     public void insertDept(Dept dept) {
         // 给对象新增两个时间属性赋值
-        dept.setCreateTime(LocalDateTime.now());
-        dept.setUpdateTime(LocalDateTime.now());
+        // 框架自动填充这两个字段
+        // dept.setCreateTime(LocalDateTime.now());
+        // dept.setUpdateTime(LocalDateTime.now());
 
         // 调用数据层
         this.deptMapper.insert(dept);
@@ -60,6 +62,7 @@ public class DeptServiceImpl implements DeptService {
     }
 
     @Override
+    @WcyLogger
     public void updateDeptById(Dept dept) {
         // 先检测有没有id
         if (dept.getId() == null){
@@ -71,6 +74,7 @@ public class DeptServiceImpl implements DeptService {
     }
 
     @Override
+    @WcyLogger
     public void deleteDeptById(Integer deptId) {
         // 根据id做删除
         Dept dept = this.deptMapper.selectById(deptId);

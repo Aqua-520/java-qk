@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.wcy.mapper.CustomerMapper">
+    <!--Page<Customer> selectCustomerListByLimit(Page<Customer> customerPage, CustomerQueryDTO queryDTO);-->
+    <select id="selectCustomerListByLimit" resultType="com.wcy.entity.Customer">
+        SELECT
+        c.*,
+        co.name AS courseName
+        FROM customer c
+        LEFT JOIN course co ON c.course_id = co.id
+        <where>
+            <if test="queryDTO.phone != null and queryDTO.phone != ''">
+                AND c.phone LIKE CONCAT('%', #{queryDTO.phone}, '%')
+            </if>
+            <if test="queryDTO.name != null and queryDTO.name != ''">
+                AND c.name LIKE CONCAT('%', #{queryDTO.name}, '%')
+            </if>
+            <if test="queryDTO.channel != null">
+                AND c.channel = #{queryDTO.channel}
+            </if>
+            <if test="queryDTO.subject != null">
+                AND c.subject = #{queryDTO.subject}
+            </if>
+        </where>
+        ORDER BY c.create_time DESC
+    </select>
+</mapper>
