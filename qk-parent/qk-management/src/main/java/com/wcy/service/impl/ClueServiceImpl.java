@@ -194,6 +194,7 @@ public class ClueServiceImpl extends ServiceImpl<ClueMapper, Clue> implements Cl
 
         // 创建更新记录
         ClueTrackRecord clueTrackRecord = new ClueTrackRecord();
+
         // 设置此条记录操作的线索id
         clueTrackRecord.setClueId(clueId);
         // 设置操作的老师是

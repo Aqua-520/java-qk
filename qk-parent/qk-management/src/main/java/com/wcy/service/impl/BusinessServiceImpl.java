@@ -11,15 +11,18 @@ import com.wcy.dto.BusinessQueryDTO;
 import com.wcy.dto.BusinessTrackDTO;
 import com.wcy.entity.Business;
 import com.wcy.entity.BusinessTrackRecord;
+import com.wcy.entity.Customer;
 import com.wcy.exception.BusinessException;
 import com.wcy.mapper.BusinessMapper;
 import com.wcy.mapper.BusinessTrackRecordMapper;
+import com.wcy.mapper.CustomerMapper;
 import com.wcy.service.BusinessService;
 import com.wcy.utils.UserHolder;
 import com.wcy.vo.BusinessPoolVO;
 import com.wcy.vo.BusinessVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,6 +33,7 @@ public class BusinessServiceImpl extends ServiceImpl<BusinessMapper, Business> i
     // 导入BusinessMapper
     private final BusinessMapper businessMapper;
     private final BusinessTrackRecordMapper businessTrackRecordMapper;
+    private final CustomerMapper customerMapper;
 
     /**
      * 分页查询商机列表
@@ -140,8 +144,15 @@ public class BusinessServiceImpl extends ServiceImpl<BusinessMapper, Business> i
         this.businessMapper.updateById(business);
 
         // 新建客户对象,存储客户信息到客户表
-        throw new BusinessException("转客户还未开发完毕,缺客户表");
+        Customer customer = new Customer();
+        // 设置customer字段
+        BeanUtils.copyProperties(business, customer, "id", "createTime", "updateTime");
 
+        // courseId 类型现在一致，已自动复制
+        // businessId 需要手动设置，因为 Customer 里才有这个字段
+        customer.setBusinessId(businessId);
+
+        this.customerMapper.insert(customer);
     }
 
     /**

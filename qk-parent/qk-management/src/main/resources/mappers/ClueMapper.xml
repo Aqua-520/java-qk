@@ -120,6 +120,7 @@
         left join user u on c.user_id = u.id
         left join activity a on c.activity_id = a.id
         <where>
+            c.status = 4
             <if test="cluePoolDTO.clueId != null">
                 and c.id = #{cluePoolDTO.clueId}
             </if>

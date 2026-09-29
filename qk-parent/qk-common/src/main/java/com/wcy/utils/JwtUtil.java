@@ -13,7 +13,7 @@ public class JwtUtil {
     // 秘钥
     private static final String SECRET_KEY = "cWluZ2tl";
     // 令牌有效期（12小时）
-    private static final long EXPIRATION_TIME = 12 * 60 * 60 * 1000;
+    private static final long EXPIRATION_TIME = 24 * 60 * 60 * 1000;
 
     /**
      * 生成JWT令牌
