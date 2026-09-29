@@ -1,5 +1,6 @@
 package com.wcy.controller;
 
+import com.wcy.annotation.WcyLogger;
 import com.wcy.common.PageResponse;
 import com.wcy.common.Response;
 import com.wcy.entity.Dept;
@@ -22,6 +23,7 @@ public class DeptController {
 
     // 新增部门的方法
     @PostMapping("/depts")
+    @WcyLogger
     Response insertDept(@RequestBody Dept dept){
         // 新增日志
         log.info("新增部门,部门名称是:{}",dept.getName());
@@ -67,6 +69,7 @@ public class DeptController {
 
     // 更新单条数据
     @PutMapping("/depts")
+    @WcyLogger
     Response updateDeptById(@RequestBody Dept dept){
         // 将对象传给业务层做处理
         this.deptService.updateDeptById(dept);
@@ -76,6 +79,7 @@ public class DeptController {
 
     // 根据id删除
     @DeleteMapping("/depts/{id}")
+    @WcyLogger
     Response deleteDeptById(@PathVariable("id") Integer deptId){
         // 将对象传给业务层做处理
         this.deptService.deleteDeptById(deptId);

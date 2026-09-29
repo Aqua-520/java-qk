@@ -18,7 +18,6 @@ public class CustomerController {
     private final CustomerService customerService;
 
     // 查询客户列表
-    @WcyLogger
     @GetMapping("/customers")
     public Response selectCustomerListByLimit(CustomerQueryDTO queryDTO){
         PageResponse<Customer> pageResponse = this.customerService.selectCustomerListByLimit(queryDTO);

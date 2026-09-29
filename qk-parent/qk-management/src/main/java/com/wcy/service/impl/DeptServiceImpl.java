@@ -62,7 +62,6 @@ public class DeptServiceImpl implements DeptService {
     }
 
     @Override
-    @WcyLogger
     public void updateDeptById(Dept dept) {
         // 先检测有没有id
         if (dept.getId() == null){
@@ -74,7 +73,6 @@ public class DeptServiceImpl implements DeptService {
     }
 
     @Override
-    @WcyLogger
     public void deleteDeptById(Integer deptId) {
         // 根据id做删除
         Dept dept = this.deptMapper.selectById(deptId);
