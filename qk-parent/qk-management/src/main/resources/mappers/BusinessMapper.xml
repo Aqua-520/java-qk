@@ -147,4 +147,15 @@
         </where>
         order by b.create_time desc
     </select>
+    <select id="businessCount" resultType="com.wcy.vo.OverviewVO">
+        -- 统计商机数据: 统计出 总商机数、待分配商机数、待跟进商机数、跟进中商机数、回收商机数、转客户商机数
+        select
+            count(1) as business_total,
+            count(if(status = 1, 1, null)) as business_wait_allot,
+            count(if(status = 2, 1, null)) as business_wait_follow,
+            count(if(status = 3, 1, null)) as business_following,
+            count(if(status = 4, 1, null)) as business_false,
+            count(if(status = 5, 1, null)) as business_convert_customer
+        from business;
+    </select>
 </mapper>

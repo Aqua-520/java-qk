@@ -8,6 +8,7 @@ import com.wcy.dto.ClueQueryDTO;
 import com.wcy.entity.Clue;
 import com.wcy.entity.User;
 import com.wcy.vo.CluePoolVO;
+import com.wcy.vo.OverviewVO;
 import org.apache.ibatis.annotations.Mapper;
 
 @Mapper
@@ -20,4 +21,6 @@ public interface ClueMapper extends BaseMapper<Clue> {
 
     // 三表联查
     Page<CluePoolVO> selectCluePool(IPage<CluePoolVO> objectPage, CluePoolDTO cluePoolDTO);
+
+    OverviewVO getClueCount();
 }

@@ -133,4 +133,15 @@
         </where>
         order by c.update_time desc
     </select>
+    <select id="getClueCount" resultType="com.wcy.vo.OverviewVO">
+        -- 统计线索的数据: 统计出 总线索数、待分配线索数、待跟进线索数、跟进中线索数、伪线索数、转商机线索数
+        select
+            count(1) as clue_total,
+            count(if(status = 1, 1, null)) as clue_wait_allot,
+            count(if(status = 2, 1, null)) as clue_wait_follow,
+            count(if(status = 3, 1, null)) as clue_following,
+            count(if(status = 4, 1, null)) as clue_false,
+            count(if(status = 5, 1, null)) as clue_convert_business
+        from clue;
+    </select>
 </mapper>

@@ -8,6 +8,7 @@ import com.wcy.dto.BusinessQueryDTO;
 import com.wcy.entity.Business;
 import com.wcy.vo.BusinessPoolVO;
 import com.wcy.vo.BusinessVO;
+import com.wcy.vo.OverviewVO;
 import org.apache.ibatis.annotations.Mapper;
 
 @Mapper
@@ -19,4 +20,6 @@ public interface BusinessMapper extends BaseMapper<Business> {
 
     // 第一个分页对象,封装分页数据用,第二个是查询参数
     Page<BusinessPoolVO> selectPool(IPage<BusinessPoolVO> objectPage, BusinessPoolQueryDTO poolQueryDTO);
+
+    OverviewVO businessCount();
 }
